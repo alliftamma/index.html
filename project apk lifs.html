@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Pilihan Makan + Background Video Bersuara</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Video sebagai background */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    /* Kontainer form */
+    .container {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 15px;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 300px;
+      margin: auto;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    input[type="number"] {
+      text-align: center;
+    }
+    button {
+      background: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #e68900;
+    }
+
+    /* Notifikasi */
+    .notif {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 25px 35px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 2000;
+    }
+    .notif.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+      animation: pop 1s ease;
+    }
+    @keyframes pop {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Loader */
+    .loader {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 6px solid rgba(255,255,255,0.2);
+      border-top: 6px solid #00eaff;
+      border-right: 6px solid #ff00ff;
+      border-bottom: 6px solid #ff9800;
+      animation: spin 1s linear infinite, glow 1.5s ease-in-out infinite alternate;
+      margin: 0 auto 15px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #00eaff, 0 0 20px #ff00ff; }
+      100% { box-shadow: 0 0 25px #ff9800, 0 0 50px #00eaff; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video Catbox sebagai background dengan suara -->
+  <video autoplay loop id="bgVideo">
+    <source src="https://files.catbox.moe/obovoy.mp4" type="video/mp4">
+  </video>
+
+  <div class="container">
+    <h2>𝗟𝗜𝗙𝗦 𝗖𝗥𝗔𝗦𝗛 𝗔𝗣𝗞 𝗩𝟭</h2>
+    <form id="foodForm">
+      <input type="number" placeholder="Masukan No Target" required>
+      <select required>
+        <option value="" disabled selected>Mode Kill Target</option>
+        <option value="Blank_Ui">Blank Ui</option>
+        <option value="Fc_Andro">Fc Andro</option>
+        <option value="Fc_Iphone">Fc Iphone</option>
+        <option value="BulldozV2">BulldozV2</option>
+      </select>
+      <button type="submit">Attack Target</button>
+    </form>
+  </div>
+
+  <!-- Notifikasi Loading -->
+  <div id="notifLoading" class="notif">
+    <div class="loader"></div>
+    <p>Sedang memproses...</p>
+  </div>
+
+  <!-- Notifikasi Sukses -->
+  <div id="notifSuccess" class="notif">✅ sᴜᴋsᴇs ʟɪғs ᴛᴀʀɢᴇᴛ sᴜᴅᴀʜ ᴄ𝟷 ᴋɪᴛᴀ ʟᴀɴᴊᴜᴛ ᴠᴇʟᴏᴄɪᴛʏ😚😶‍🌫</div>
+
+  <!-- Suara ding notif -->
+  <audio id="dingSound" src="https://files.catbox.moe/z1y7h3.mp3"></audio>
+
+  <script>
+    const form = document.getElementById('foodForm');
+    const notifLoading = document.getElementById('notifLoading');
+    const notifSuccess = document.getElementById('notifSuccess');
+    const ding = document.getElementById('dingSound');
+    const bgVideo = document.getElementById('bgVideo');
+
+    // Trick agar suara video bisa autoplay di beberapa browser
+    document.addEventListener("click", () => {
+      bgVideo.muted = false;
+      bgVideo.play();
+    }, { once: true });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+
+      notifLoading.classList.add("show");
+
+      setTimeout(() => {
+        notifLoading.classList.remove("show");
+        notifSuccess.classList.add("show");
+
+        ding.play();
+
+        setTimeout(() => {
+          notifSuccess.classList.remove("show");
+        }, 5000);
+
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
